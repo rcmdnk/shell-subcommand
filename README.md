@@ -16,23 +16,26 @@ The minimum script is:
 
 ```mycmd
 #!/usr/bin/env bash
+
 source /path/to/shell-subcommand
 ```
 
-Then, you can call any of alias, function or executable in the PATH
+Then, you can call executables in the PATH
 which have a name starting with `mycmd-`.
 
-e.g., if you have an function named `mycmd-func`,
-you can call `mycmd func`
+e.g., if you have an executable named `mycmd-exe`,
+you can call `mycmd exe`
 
 ## Use alias/function in your environment
 
-alias/function are not passed to the script.
+`shell-subcommand` can find alias/function,
+but alias/function are not passed to the script.
 
 If they are defined in **.bashrc**, just call them before `shell-subcommand`.
 
 ```mycmd
 #!/usr/bin/env bash
+
 source ~/.bashrc
 source /path/to/shell-subcommand
 ```
@@ -41,6 +44,7 @@ Of course, you can defined them in the script, too:
 
 ```mycmd
 #!/usr/bin/env bash
+
 alias mycmd-hello="echo Hello world!"
 mycmd-hello-func () {
   echo "Hello, this is function!"
@@ -80,7 +84,6 @@ If you want to add more help, you can change `usage...` sentences by `HELP_MAIN`
     HELP_MAIN="usage: $(basename "$0") <sub-commands> [options]
 
     sub-commands are made from alias, function, and executables in PATH.
-"
 
 Now it shows:
 
