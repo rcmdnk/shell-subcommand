@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+for opt in "$@";do
+  case $opt in
+    "-h" ) echo "This is exe's help!"; exit;;
+    "help" ) echo "This is exe's help!"; exit;;
+    * ) echo "Wrong argument: $opt
+Check \"$(basename "$0"|tr - ' ') help\" for more information";exit 1;;
+  esac
+  shift
+done
+
+echo "This is exe"

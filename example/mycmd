@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+#source ~/.bashrc
+source ./setup.sh
+export PATH=./:$PATH
+SHORT_DESCRIPTION="My command with various sub commands!"
+HELP_MAIN="usage: $(basename "$0") <sub-commands> [options]
+
+sub-commands are made from alias, function, and executables in PATH.
+"
+source ../bin/shell-subcommand

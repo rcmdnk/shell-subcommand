@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+MAIN_CMD=${MAIN_CMD:-$(basename "$0")}
+PREFIX="${MAIN_CMD}-"
+
+SHORT_DESCRIPTION=${SHORT_DESCRIPTION:-""}
+HELP_MAIN=${HELP_MAIN:-"usage: $MAIN_CMD <sub-commands> [options]"}
+
+if [ -n "$SHORT_DESCRIPTION" ];then
+HELP=${HELP:-"$MAIN_CMD: $SHORT_DESCRIPTION
+
+$HELP_MAIN"}
+else
+HELP=${HELP:-"$HELP_MAIN"}
+fi
+
+print_help () {
+  cat << EOF
+$HELP
+
+sub commands: $commands
+EOF
+}
+
+print_invalid () {
+  cat << EOF
+Invalid sub command: $1
+
+Sub commands: $commands
+EOF
+}
+
+get_alias () {
+  for cmd in $(alias|grep "alias $PREFIX"|cut -d' ' -f2|cut -d= -f1);do
+    c=${cmd/$PREFIX/}
+    commands="$commands $c"
+  done
+}
+
+get_function () {
+  for cmd in $(declare -F|grep "declare -f $PREFIX"|cut -d' ' -f3);do
+    c=${cmd/$PREFIX/}
+    commands="$commands $c"
+  done
+}
+
+get_exe () {
+  local orig_ifs=$IFS
+  IFS=":"
+  local pathes=($PATH)
+  IFS=$orig_ifs
+  local p
+  local f
+  local cmd
+  for p in "${pathes[@]}";do
+    if [ ! -d "$p" ];then
+      continue
+    fi
+    while read -r f;do
+      if [ -x "$f" ];then
+        cmd="${f##*/}"
+        c=${cmd/$PREFIX/}
+        commands="${commands} $c"
+      fi
+    done < <(find  "$p" -maxdepth 1 -name  "${PREFIX}*")
+  done
+}
+
+get_commands () {
+  commands=""
+  get_alias
+  get_function
+  get_exe
+  commands="$(for c in $commands;do echo $c;done |sort -u|tr $'\n' ' ')help"
+}
+
+check_command () {
+  get_commands
+  if [ $# -eq 0 ] || [ "$1" = "-h" ] || [ "$1" = "help" ];then
+    print_help
+    exit
+  fi
+  cmd="$1"
+  shift
+  if ! echo " $commands "|grep -q " $cmd ";then
+    print_invalid "$cmd"
+    exit 1
+  fi
+}
+
+execute () {
+  check_command "$@"
+  shift
+  "$PREFIX$cmd" "$@"
+}
+
+execute "$@"
+
