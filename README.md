@@ -83,11 +83,11 @@ If you want to add more help, you can change `usage...` sentences by `HELP_MAIN`
 
     HELP_MAIN="usage: $(basename "$0") <sub-commands> [options]
 
-    sub-commands are made from alias, function, and executables in PATH.
+    sub-commands are made from alias, function, and executables in PATH."
 
 Now it shows:
 
-    $ ./mycmd
+    $ mycmd
     mycmd: My command with various sub commands!
 
     usage: mycmd <sub-commands> [options]
